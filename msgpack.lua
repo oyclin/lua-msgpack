@@ -549,12 +549,16 @@ end
 function string.split(input, delimiter)      input = tostring(input)      delimiter = tostring(delimiter)      if (delimiter=='') then return false end      local pos,arr = 0, {}      for st,sp in function() return string.find(input, delimiter, pos, true) end do          table.insert(arr, string.sub(input, pos, st - 1))          pos = sp + 1      end      table.insert(arr, string.sub(input, pos))      return arr   end
 
 local function unpack_num(str)
-  local msg_t = str:split(" ")
-  local msg = ""
-  for _, v in ipairs(msg_t) do
-    v = string.char("0x" .. v)
-    msg = msg .. (v or "")
-  end
+  local n = string.byte(str, 1, 1)
+  --TODO:适应多种类型，而不只是table
+  --if n > 0xdc and n <= 0xdf then
+    local msg_t = str:split(" ")
+    local msg = ""
+    for _, v in ipairs(msg_t) do
+      v = string.char("0x" .. v)
+      msg = msg .. (v or "")
+    end
+  --end
   return ljp_unpack(msg)
 end
 
