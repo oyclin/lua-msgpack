@@ -536,9 +536,31 @@ local function ljp_stat()
   }
 end
 
+local function pack_num(data)
+  local s = ljp_pack(data)
+  local total = ""
+  for i = 1, #s do
+    local num = string.byte(s:sub(i, i))
+    total = total .. string.format("%02X", num) .. " "
+  end
+  return total:sub(1, -2)
+end
+
+function string.split(input, delimiter)      input = tostring(input)      delimiter = tostring(delimiter)      if (delimiter=='') then return false end      local pos,arr = 0, {}      for st,sp in function() return string.find(input, delimiter, pos, true) end do          table.insert(arr, string.sub(input, pos, st - 1))          pos = sp + 1      end      table.insert(arr, string.sub(input, pos))      return arr   end
+
+local function unpack_num(str)
+  local msg_t = str:split(" ")
+  local msg = ""
+  for _, v in ipairs(msg_t) do
+    v = string.char("0x" .. v)
+    msg = msg .. (v or "")
+  end
+  return ljp_unpack(msg)
+end
+
 local msgpack = {
-  pack = ljp_pack,
-  unpack = ljp_unpack,
+  pack = pack_num,
+  unpack = unpack_num,
   stat = ljp_stat
 }
 
